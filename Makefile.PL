@@ -7,10 +7,12 @@ WriteMakefile(
     AUTHOR       => 'M. Blom (blom@cpan.org)',
     ABSTRACT     => 'Flickr authentication for Catalyst',
     PREREQ_PM    => {
-                     'Catalyst::Plugin::Authentication'  => 0.10,
-                     'Flickr::API'    => 1.00,
-                     'LWP::UserAgent' => 5.802,
-                     'Test::More'     => 0,
-                     'XML::Simple'    => 0,
+                     'Catalyst::Plugin::Authentication' => 0.10,
+                     'Class::Accessor::Fast'            => 0,
+                     'Flickr::API'                      => 1.00,
+                     'LWP::UserAgent'                   => 5.802,
+                     'Test::MockObject'                 => 0,
+                     'Test::More'                       => 0,
+                     'XML::Simple'                      => 0,
                     },
 );

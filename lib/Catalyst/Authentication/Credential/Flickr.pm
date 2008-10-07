@@ -8,7 +8,7 @@ BEGIN {
     __PACKAGE__->mk_accessors(qw/_xml _flickr key secret perms/);
 }
 
-our $VERSION = "0.01_01";
+our $VERSION = "0.02";
 
 use Catalyst::Exception ();
 use Flickr::API;
@@ -118,18 +118,16 @@ example.com/flickr/ ):
 
 =head1 DESCRIPTION
 
+This module handles Flickr API authentication in a Catalyst application.
+
 When L<Catalyst::Plugin::Authentication> 0.10 was released, the API had 
-changed, resulting in broken code for some of my projects. They claim to
-have some backward compatibility however, so it was most likely just my
-own bad coding that broke stuff.
+changed, resulting in broken code when using 
+L<Catalyst::Plugin::Authentication::Credential::Flickr>.
 
-Anyways, L<Catalyst::Plugin::Authentication::Credential::Flickr> didn't
-do what I wanted it to do and so I decided to rewrite the code, based on
-the new API.
+This module tries to follow the guidelines of the new API and deprecate
+L<Catalyst::Plugin::Authentication::Credential::Flickr>.
 
-This version tries to follow the guidelines of the new API and should almost
-be a drop in replacement for C::P::Authentication::Credential::Flickr. Well,
-at least code changes are kept to a minimal.
+Code changes are needed, but are fairly minimal.
 
 =head1 METHODS
 
@@ -143,19 +141,30 @@ Will not be called by you directly, but will use the configuration you
 provide (see above). Mandatory parameters are C<key>, C<secret> and
 C<perms>. Please see L<Flickr::API> for more details on them.
 
-=head2 request_auth_url( $c )
+=head2 authenticate_flickr_url( $c )
 
 This method will return the authentication URL. Bounce your users there
 before calling the C<authentication> method.
 
-=head2 authenticate_flickr_url( $c )
+=head2 authenticate( )
 
-Alias for C<request_auth_url> ('cause C::P::Authentication::Credential::Flickr
-used to call the method like this).
+Handles the authentication. Nothing more, nothing less. It returns
+a L<Catalyst::Authentication::User::Hash> with the following keys
+(all coming straight from Flickr).
 
-=head2 authenticate()
+=over 4
 
-Handles the authentication. Nothing more, nothing less.
+=item fullname
+
+=item nsid
+
+=item perms
+
+=item token
+
+=item username
+
+=back
 
 =head1 AUTHOR
 
@@ -177,7 +186,7 @@ L<Catalyst::Plugin::Authentication>, L<Flickr::API>
 
 =head1 BUGS
 
-C<Bugs? Impossible!>. Please report bugs to L<http://rt.cpan.org/Ticket/Create.html?Queue=Catalyst-Authentication-Credentials-Flickr>
+C<Bugs? Impossible!>. Please report bugs to L<http://rt.cpan.org/Ticket/Create.html?Queue=Catalyst-Authentication-Credential-Flickr>
 
 =head1 THANKS
 

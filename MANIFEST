@@ -4,7 +4,7 @@ LICENSE
 Changes
 Makefile.PL
 lib/Catalyst/Authentication/Credential/Flickr.pm
-t/001_load.t
-t/pod-coverage.t
-t/pod.t
+t/001_basic.t
+t/002_pod.t
+t/003_pod-coverage.t
 META.yml                                 Module meta-data (added by MakeMaker)

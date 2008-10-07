@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Catalyst-Authentication-Credential-Flickr
-version:             0.01_01
+version:             0.02
 abstract:            Flickr authentication for Catalyst
 license:             ~
 author:              
@@ -9,8 +9,10 @@ generated_by:        ExtUtils::MakeMaker version 6.44
 distribution_type:   module
 requires:     
     Catalyst::Plugin::Authentication: 0.1
+    Class::Accessor::Fast:         0
     Flickr::API:                   1
     LWP::UserAgent:                5.802
+    Test::MockObject:              0
     Test::More:                    0
     XML::Simple:                   0
 meta-spec:
