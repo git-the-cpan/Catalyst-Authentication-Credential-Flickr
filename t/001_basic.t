@@ -4,11 +4,27 @@ use strict;
 use Test::MockObject;
 use Test::More tests => 8;
 
-my ($flickr, $resp);
+my ($flickr, $resp, $tree);
 
 BEGIN {
+    $tree = {
+       'children' => [{ }, {
+          'children' => [{
+             'name' => 'token',
+             'children' => [{ 'content' => 'T0K3N' } ],
+          },{
+             'name' => 'perms',
+             'children' => [{ 'content' => 'read' } ],
+          },{
+             'name' => 'user',
+             'children' => [],
+             'attributes' => { 'fullname' => 'b10m', 'nsid' => '1337@N00',
+                               'username' => 'BLOM' }
+          }]
+       }]
+    };
     $resp   = Test::MockObject->new(); 
-    $resp->mock( decoded_content => sub { join "", (<DATA>); } );
+    $resp->{tree} = $tree;
 
     $flickr = Test::MockObject->new();
     $flickr->fake_module("Flickr::API");
@@ -48,12 +64,3 @@ is($user->{nsid}, '1337@N00');
 is($user->{perms}, 'read');
 is($user->{token}, 'T0K3N');
 is($user->{username}, 'BLOM');
-
-__DATA__
-<rsp stat="ok">
-<auth>
-        <token>T0K3N</token>
-        <perms>read</perms>
-        <user nsid="1337@N00" username="BLOM" fullname="b10m" />
-</auth>
-</rsp>

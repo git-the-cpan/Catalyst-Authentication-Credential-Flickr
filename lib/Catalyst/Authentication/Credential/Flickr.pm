@@ -5,14 +5,13 @@ use warnings;
 use base qw( Class::Accessor::Fast );
 
 BEGIN {
-    __PACKAGE__->mk_accessors(qw/_xml _flickr key secret perms/);
+    __PACKAGE__->mk_accessors(qw/_flickr key secret perms/);
 }
 
-our $VERSION = "0.02";
+our $VERSION = "0.04";
 
 use Catalyst::Exception ();
 use Flickr::API;
-use XML::Simple;
 
 sub new {
     my ($class, $config, $c, $realm) = @_;
@@ -32,9 +31,6 @@ sub new {
     $self->_flickr(Flickr::API->new({ key => $self->key, 
                                       secret => $self->secret }));
 
-    # Create a XML::Simple instance
-    $self->_xml(XML::Simple->new());
-
     return $self;
 }
 
@@ -46,15 +42,22 @@ sub authenticate {
     my $api_response = $self->_flickr->execute_method( 'flickr.auth.getToken',
         { frob => $frob, } );
 
-    my $xml = $self->_xml->XMLin($api_response->decoded_content);
+    # Mapping the XML (why, oh why use XML::Parser::Lite::Tree ?)
+    # Let's pray really hard that Flickr will never ever change the layout
+    # of their XML. This _will_ break in that case.
 
-    # "Flatten" returned XML a little
-    foreach(keys %{$xml->{auth}{user}}) { 
-        $xml->{auth}{$_} = delete $xml->{auth}{user}{$_};
+    my $user = {};
+    foreach my $node (@{$api_response->{tree}{children}[1]{children}}) {
+        if(defined $node->{children} && $node->{children}[0]{content}) {
+            $user->{$node->{name}} = $node->{children}[0]{content}
+        }
+        if(defined $node->{attributes}) {
+            $user->{$_} = $node->{attributes}{$_} 
+                for(keys %{$node->{attributes}});
+        }
     }
-    delete $xml->{auth}{user};
     
-    my $user_obj = $realm->find_user( $xml->{auth}, $c );
+    my $user_obj = $realm->find_user( $user, $c );
     return ref $user_obj ? $user_obj : undef;
 }
     
